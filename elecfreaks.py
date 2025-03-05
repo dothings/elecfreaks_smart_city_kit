@@ -8,11 +8,10 @@ class SonarBit:
         class to get distance measurements from
         the elecfreaks 1-wire sonar:bit as found
         in the smart city kit
-
-        takes pin on which the Sonarbit is connected
     """
 
     def __init__(self, pin):
+        # pins = [pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7, pin8, pin9]
         self.pin = pin
 
     def distance(self):
@@ -47,9 +46,55 @@ class Led:
 
     def __init__(self, pin):
         self.pin = pin
+        self.state = False
 
     def on(self):
         self.pin.write_digital(1)
+        self.state = True
 
     def off(self):
         self.pin.write_digital(0)
+        self.state = False
+
+    def flip(self):
+        # change on to off and off to on
+        if self.state:
+            self.off()
+        else:
+            self.on()
+
+class SoilMoistureSensor:
+    """ soil moisture sensor (two pins)
+
+    takes: pin
+    returns: int 0-100 (%)
+    """
+    def __init__(self, pin):
+        self.pin = pin
+
+    def measure(self):
+        reading = self.pin.read_analog()
+        value = (reading * 100) / 1023
+        return value
+
+
+class WaterLevelSensor:
+    """ water level sensor (rectangle)
+
+    this sensor is wierd, not found a logical
+    reading to % calculation
+
+    takes: pin
+    returns: int 0-100 (%)
+    """
+    def __init__(self, pin):
+        self.pin = pin
+
+    def measure(self):
+        reading = self.pin.read_analog()
+        value = 0
+        if reading > 300:
+            value = (reading -300) / 2
+        return value
+
+
